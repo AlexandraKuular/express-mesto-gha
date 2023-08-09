@@ -19,14 +19,14 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      res.send({ user });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
+      if (!user) {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные.' });
       }
+      return res.send({ user });
+    })
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         return res
           .status(ERROR_NOT_FOUND_CODE)
