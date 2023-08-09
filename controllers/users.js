@@ -22,6 +22,11 @@ module.exports.getUser = (req, res) => {
       res.send({ user });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res
+          .status(ERROR_CODE)
+          .send({ message: 'Переданы некорректные данные.' });
+      }
       if (err.name === 'ValidationError') {
         return res
           .status(ERROR_NOT_FOUND_CODE)
