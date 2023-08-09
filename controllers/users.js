@@ -60,7 +60,7 @@ module.exports.addUser = (req, res) => {
 module.exports.setUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate({ name, about }, req.user._id, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
@@ -84,7 +84,7 @@ module.exports.setUser = (req, res) => {
 module.exports.setAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate({ avatar }, req.user._id, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
