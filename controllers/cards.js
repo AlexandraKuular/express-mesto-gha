@@ -41,10 +41,15 @@ module.exports.deleteCard = (req, res) => {
     .then(() => {
       res.send({ message: 'Карточка удалена' });
     })
-    .catch(() => {
-      res
-        .status(ERROR_CODE)
-        .send({ message: 'Карточка с указанным _id не найдена.' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res
+          .status(ERROR_CODE)
+          .send({ message: 'Карточка с указанным _id не найдена.' });
+      }
+      return res
+        .status(INTERNAL_ERROR)
+        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
     });
 };
 
@@ -89,7 +94,7 @@ module.exports.dislikeCard = (req, res) => {
       return res.send({ card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные для снятия лайка.' });
