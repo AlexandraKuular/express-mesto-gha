@@ -17,11 +17,18 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.userId)
+  const { userId } = req.params;
+
+  User.findById(userId)
     .then((user) => {
       res.send({ user });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res
+          .status(ERROR_CODE)
+          .send({ message: 'Некорректный id.' });
+      }
       if (err.name === 'ValidationError') {
         return res
           .status(ERROR_NOT_FOUND_CODE)
@@ -65,7 +72,7 @@ module.exports.setUser = (req, res) => {
       return res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные при обновлении профиля.' });
@@ -89,7 +96,7 @@ module.exports.setAvatar = (req, res) => {
       return res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные при обновлении аватара.' });
