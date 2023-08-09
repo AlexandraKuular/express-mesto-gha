@@ -16,13 +16,14 @@ app.use((req, res, next) => {
 
   next();
 });
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND_CODE).send({ message: `Ресурс по адресу ${req.path} не найден.` });
-});
 app.use(express.json());
 app.use(bodyParser.json());
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
+
+app.use((req, res) => {
+  res.status(ERROR_NOT_FOUND_CODE).send({ message: `Ресурс по адресу ${req.path} не найден.` });
+});
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
