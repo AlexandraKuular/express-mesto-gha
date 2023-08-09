@@ -38,28 +38,13 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        return res
-          .status(ERROR_CODE)
-          .send('Карточка не найдена');
-      }
-      if (card.owner.toString() !== req.params.cardId) {
-        return res
-          .status(ERROR_NOT_FOUND_CODE)
-          .send('Карточка с указанным _id не найдена.');
-      }
-      return res.send({ message: 'Карточка удалена' });
+    .then(() => {
+      res.send({ message: 'Карточка удалена' });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Карточка с указанным _id не найдена.' });
-      }
-      return res
-        .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+    .catch(() => {
+      res
+        .status(ERROR_CODE)
+        .send({ message: 'Карточка с указанным _id не найдена.' });
     });
 };
 
@@ -78,7 +63,7 @@ module.exports.likeCard = (req, res) => {
       return res.send({ card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные для постановки лайка.' });
