@@ -21,16 +21,16 @@ module.exports.getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         return res
-          .status(ERROR_CODE)
-          .send({ message: 'Переданы некорректные данные.' });
+          .status(ERROR_NOT_FOUND_CODE)
+          .send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res
-          .status(ERROR_NOT_FOUND_CODE)
-          .send({ message: 'Пользователь по указанному _id не найден.' });
+          .status(ERROR_CODE)
+          .send({ message: 'Переданы некорректные данные.' });
       }
       return res
         .status(INTERNAL_ERROR)
