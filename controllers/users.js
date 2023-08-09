@@ -17,18 +17,11 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  const { userId } = req.params;
-
-  User.findById(userId)
+  User.findById(req.params.userId)
     .then((user) => {
       res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректный id.' });
-      }
       if (err.name === 'ValidationError') {
         return res
           .status(ERROR_NOT_FOUND_CODE)
@@ -62,7 +55,7 @@ module.exports.addUser = (req, res) => {
 module.exports.setUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate({ name, about }, req.user._id)
+  User.findByIdAndUpdate({ name, about }, req.user._id, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
@@ -72,7 +65,7 @@ module.exports.setUser = (req, res) => {
       return res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные при обновлении профиля.' });
@@ -86,7 +79,7 @@ module.exports.setUser = (req, res) => {
 module.exports.setAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate({ avatar }, req.user._id)
+  User.findByIdAndUpdate({ avatar }, req.user._id, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
@@ -96,7 +89,7 @@ module.exports.setAvatar = (req, res) => {
       return res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res
           .status(ERROR_CODE)
           .send({ message: 'Переданы некорректные данные при обновлении аватара.' });
