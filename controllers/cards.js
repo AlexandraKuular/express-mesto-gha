@@ -38,8 +38,13 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(() => {
-      res.send({ message: 'Карточка удалена' });
+    .then((card) => {
+      if (!card) {
+        return res
+          .status(ERROR_NOT_FOUND_CODE)
+          .send({ message: 'Передан несуществующий _id карточки.' });
+      }
+      return res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
