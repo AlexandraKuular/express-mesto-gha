@@ -43,7 +43,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch(() => {
       res
-        .status(ERROR_NOT_FOUND_CODE)
+        .status(ERROR_CODE)
         .send({ message: 'Карточка с указанным _id не найдена.' });
     });
 };
