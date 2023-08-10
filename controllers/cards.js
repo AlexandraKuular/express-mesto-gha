@@ -12,7 +12,7 @@ module.exports.getCards = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -32,7 +32,7 @@ module.exports.createCard = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -54,7 +54,7 @@ module.exports.deleteCard = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -80,7 +80,7 @@ module.exports.likeCard = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -106,6 +106,6 @@ module.exports.dislikeCard = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };

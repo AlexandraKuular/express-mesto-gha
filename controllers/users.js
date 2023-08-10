@@ -12,7 +12,7 @@ module.exports.getUsers = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -34,7 +34,7 @@ module.exports.getUser = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -53,7 +53,7 @@ module.exports.addUser = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -77,7 +77,7 @@ module.exports.setUser = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -101,6 +101,6 @@ module.exports.setAvatar = (req, res) => {
       }
       return res
         .status(INTERNAL_ERROR)
-        .send({ message: `Произошл ошибка ${err.name}: ${err.message}` });
+        .send({ message: 'На сервере произошла ошибка.' });
     });
 };
