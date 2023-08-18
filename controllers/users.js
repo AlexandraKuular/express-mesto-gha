@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ErrorCode = require('../errors/errorCode');
 const ErrorNotFoundCode = require('../errors/errorNotFoundCode');
@@ -78,6 +79,12 @@ module.exports.login = (req, res, next) => {
           }
           // аутентификация успешна
           return res.send({ message: 'Добро пожаловать!' });
+        })
+        .then(() => {
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+
+          // вернём токен
+          res.send({ token });
         });
     })
     .catch(next);
