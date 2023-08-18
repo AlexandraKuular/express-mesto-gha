@@ -32,10 +32,10 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.addUser = async (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
   try {
+    const {
+      name, about, avatar, email, password,
+    } = req.body;
     const hash = await bcrypt.hash(password, 10);
 
     User.create({
