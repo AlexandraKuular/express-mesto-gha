@@ -9,7 +9,7 @@ const auth = require('./middlewares/auth');
 const {
   addUser, login,
 } = require('./controllers/users');
-const { ERROR_NOT_FOUND_CODE } = require('./constants/networkStatuses');
+const ErrorNotFoundCode = require('./errors/errorNotFoundCode');
 
 const { PORT = 3000 } = process.env;
 
@@ -27,10 +27,10 @@ app.post('/signin', validationLogin, login);
 
 app.use(auth);
 app.use(router.use('/users', require('./routes/users')));
-app.use('/cards', require('./routes/cards'));
+app.use(router.use('/cards', require('./routes/cards')));
 
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND_CODE).send({ message: `Ресурс по адресу ${req.path} не найден.` });
+router.use((req, res, next) => {
+  next(new ErrorNotFoundCode('Ресурс по адресу не найден.'));
 });
 app.use(errors());
 app.use(InternalError);
