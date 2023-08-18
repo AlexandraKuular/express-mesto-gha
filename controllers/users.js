@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ErrorCode = require('../errors/errorCode');
 const ErrorNotFoundCode = require('../errors/errorNotFoundCode');
@@ -10,10 +9,7 @@ module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ErrorCode('Переданы некорректные данные при создании пользователя.'));
-      }
-      next();
+      next(err);
     });
 };
 
@@ -28,8 +24,9 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ErrorCode('Переданы некорректные данные.'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -37,29 +34,30 @@ module.exports.addUser = async (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  const hash = await bcrypt.hash(password, 10);
+  try {
+    const hash = await bcrypt.hash(password, 10);
 
-  User.create({
-    name, about, avatar, email, password: hash,
-  })
-    .then((user) => {
-      res.send({
-        _id: user._id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-      });
+    User.create({
+      name, about, avatar, email, password: hash,
     })
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует.'));
-      }
-      if (err.name === 'ValidationError') {
-        next(new ErrorCode('Переданы некорректные данные при создании пользователя.'));
-      }
+      .then((user) => {
+        res.send({
+          _id: user._id,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        });
+      });
+  } catch (err) {
+    if (err.code === 11000) {
+      next(new ConflictError('Пользователь с таким email уже существует.'));
+    } else if (err.name === 'ValidationError') {
+      next(new ErrorCode('Переданы некорректные данные при создании пользователя.'));
+    } else {
       next(err);
-    });
+    }
+  }
 };
 
 module.exports.login = (req, res, next) => {
@@ -68,21 +66,21 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
       }
 
       // сравниваем переданный пароль и хеш из базы
       return bcrypt.compare(password, user.password)
-        .then(() => {
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key');
-
-          // вернём токен
-          res.send({ token });
+        .then((matched) => {
+          if (!matched) {
+            // хеши не совпали — отклоняем промис
+            return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+          }
+          // аутентификация успешна
+          return res.send({ message: 'Добро пожаловать!' });
         });
     })
-    .catch(() => {
-      next(new UnauthorizedError('Присланный токен некорректен.'));
-    });
+    .catch(next);
 };
 
 module.exports.setUser = (req, res, next) => {
@@ -97,9 +95,10 @@ module.exports.setUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new ErrorCode('Переданы некорректные данные при обновлении профиля.');
+        next(new ErrorCode('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(err);
       }
-      next();
     });
 };
 
@@ -115,9 +114,10 @@ module.exports.setAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new ErrorCode('Переданы некорректные данные при обновлении аватара.');
+        next(new ErrorCode('Переданы некорректные данные при обновлении аватара.'));
+      } else {
+        next(err);
       }
-      next();
     });
 };
 

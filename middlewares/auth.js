@@ -3,14 +3,6 @@ const UnauthorizedError = require('../errors/unauthorizedError');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  if (req.url === '/signup') {
-    next();
-    return;
-  }
-  if (req.url === '/signin') {
-    next();
-    return;
-  }
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError('Необходима авторизация.');
   }
