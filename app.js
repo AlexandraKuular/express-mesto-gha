@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const router = require('express').Router();
 const InternalError = require('./middlewares/internalError');
 const { validationLogin, validationRegister } = require('./middlewares/validations');
 const auth = require('./middlewares/auth');
@@ -25,7 +26,7 @@ app.post('/signup', validationRegister, addUser);
 app.post('/signin', validationLogin, login);
 
 app.use(auth);
-app.use('/users', require('./routes/users'));
+app.use(router.use('/users', require('./routes/users')));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {

@@ -5,9 +5,9 @@ const {
 const { validationUserId, validationUserInfo, validationAvatar } = require('../middlewares/validations');
 
 router.get('/', getUsers);
-router.get('/:userId', validationUserId, getUser);
+router.get('/me', getMe);
 router.patch('/me', validationUserInfo, setUser);
 router.patch('/me/avatar', validationAvatar, setAvatar);
-router.get('/me', getMe);
+router.get('/:userId', validationUserId, getUser);
 
 module.exports = router;
