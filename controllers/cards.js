@@ -7,10 +7,6 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch((err) => {
-      // if (err.name === 'ValidationError') {
-      //  return next(new ErrorCode('Переданы некорректные данные при создании пользователя.'));
-      // }
-      // return next();
       next(err);
     });
 };

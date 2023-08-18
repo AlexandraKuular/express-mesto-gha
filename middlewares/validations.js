@@ -1,6 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 const isUrl = require('validator/lib/isURL');
-// const { url } = require('../constants/url');
 const ErrorCode = require('../errors/errorCode');
 
 const validationUrl = (url) => {
@@ -20,7 +19,6 @@ module.exports.validationCardId = celebrate({
 module.exports.validationCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    // link: Joi.string().required().pattern(url),
     link: Joi.string().required().custom(validationUrl),
   }),
 });
@@ -36,7 +34,6 @@ module.exports.validationRegister = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    // avatar: Joi.string().pattern(url),
     avatar: Joi.string().custom(validationUrl),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -45,7 +42,6 @@ module.exports.validationRegister = celebrate({
 
 module.exports.validationUserId = celebrate({
   params: Joi.object().keys({
-    // id: Joi.string().required().length(24),
     userId: Joi.string().required().hex().length(24),
   }),
 });
@@ -59,7 +55,6 @@ module.exports.validationUserInfo = celebrate({
 
 module.exports.validationAvatar = celebrate({
   body: Joi.object().keys({
-    // avatar: Joi.string().pattern(url),
     avatar: Joi.string().custom(validationUrl),
   }),
 });

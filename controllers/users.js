@@ -34,7 +34,6 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.addUser = async (req, res, next) => {
-  console.log('Hi');
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -122,17 +121,7 @@ module.exports.setAvatar = (req, res, next) => {
     });
 };
 
-// module.exports.getMe = async (req, res, next) => {
-//   try {
-//     const user = await User.findOne({ _id: req.user._id });
-//     return res.send(user);
-//   } catch (err) {
-//     return next();
-//   }
-// };
-
 module.exports.getMe = (req, res, next) => {
-  console.log(req);
   User.findOne({ _id: req.user._id })
     .then((user) => {
       res.send(user);
