@@ -37,23 +37,21 @@ module.exports.addUser = async (req, res, next) => {
       name, about, avatar, email, password,
     } = req.body;
     const hash = await bcrypt.hash(password, 10);
-
-    User.create({
+    const user = await User.create({
       name, about, avatar, email, password: hash,
-    })
-      .then((user) => {
-        res.send({
-          _id: user._id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-        });
-      });
+    });
+    res.send({
+      _id: user._id,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+      message: 'Пользователь успешно создан',
+    });
   } catch (err) {
     if (err.code === 11000) {
       next(new ConflictError('Пользователь с таким email уже существует.'));
-    } else if (err.name === 'ValidationError') {
+    } else if (err.name === 'CastError') {
       next(new ErrorCode('Переданы некорректные данные при создании пользователя.'));
     } else {
       next(err);
@@ -77,14 +75,12 @@ module.exports.login = (req, res, next) => {
             // хеши не совпали — отклоняем промис
             return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
           }
-          // аутентификация успешна
-          return res.send({ message: 'Добро пожаловать!' });
-        })
-        .then(() => {
           const token = jwt.sign({ _id: user._id }, 'some-secret-key');
 
           // вернём токен
           res.send({ token });
+          // аутентификация успешна
+          return res.send({ message: 'Добро пожаловать!' });
         });
     })
     .catch(next);
